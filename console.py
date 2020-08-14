@@ -12,6 +12,7 @@ from models.amenity import Amenity
 from models.review import Review
 from os import getenv
 
+
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
 
@@ -112,17 +113,59 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
+    @classmethod
+    def parseArguments(self, args):
+        """ Converts a list of key_value into a valid kwargs"""
+        dictionary = {}
+        for arg in args:
+            key, value = arg.split("=")
+            if value[0] == '"':
+                value = value.strip('"')
+                value = value.replace('"', '\"')
+                value = value.replace('_', ' ')
+            elif '.' in value:
+                value = float(value)
+            elif ',' in value:
+                continue
+            else:
+                value = int(value)
+
+            dictionary[key] = value
+
+            # string: tr " \" -> _ to space and start with "
+            # float: Contains a dot
+            # number: Int
+
+
+        return dictionary
+
     def do_create(self, args):
         """ Create an object of any class"""
+
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+
+        args = args.split(" ")
+        class_name = args[0]
+        if class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+
+        # dictionary = { 'key': valye
+        # create <class>
+        # create <class> param1 param2...
+        # param
+
+        new_instance = HBNBCommand.classes[class_name]()
+        class_attributes = HBNBCommand.parseArguments(args[1:])
+        if class_attributes:
+            for attr, v in class_attributes.items():
+                setattr(new_instance, attr, v)
+
         storage.save()
         print(new_instance.id)
+        #storage.save()
         new_instance.save()
 
     def help_create(self):
@@ -199,6 +242,14 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
         print_list = []
+
+        """if args:
+            args = args.split(' ')[0]  # remove possible trailing args
+            if args not in HBNBCommand.classes:
+                print("** class doesn't exist **")
+                return
+            for k, v in storage._FileStorage__objects.items():
+                if k.split('.')[0] == args:"""
         if getenv('HBNB_TYPE_STORAGE') != 'db':
             if args:
                 args = args.split(' ')[0]  # remove possible trailing args
@@ -226,6 +277,7 @@ class HBNBCommand(cmd.Cmd):
                     print_list.append(str(v))
 
         print(print_list)
+
     def help_all(self):
         """ Help information for the all command """
         print("Shows all objects, or all of a class")
