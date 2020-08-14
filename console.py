@@ -10,7 +10,7 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-
+from os import getenv
 
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
@@ -37,7 +37,6 @@ class HBNBCommand(cmd.Cmd):
 
     def precmd(self, line):
         """Reformat command line for advanced command syntax.
-
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
@@ -124,7 +123,7 @@ class HBNBCommand(cmd.Cmd):
         new_instance = HBNBCommand.classes[args]()
         storage.save()
         print(new_instance.id)
-        storage.save()
+        new_instance.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -200,21 +199,33 @@ class HBNBCommand(cmd.Cmd):
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
         print_list = []
-
-        if args:
-            args = args.split(' ')[0]  # remove possible trailing args
-            if args not in HBNBCommand.classes:
-                print("** class doesn't exist **")
-                return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
+        if getenv('HBNB_TYPE_STORAGE') != 'db':
+            if args:
+                args = args.split(' ')[0]  # remove possible trailing args
+                if args not in HBNBCommand.classes:
+                    print("** class doesn't exist **")
+                    return
+                for k, v in storage._FileStorage__objects.items():
+                    if k.split('.')[0] == args:
+                        print_list.append(str(v))
+            else:
+                for k, v in storage._FileStorage__objects.items():
                     print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
-                print_list.append(str(v))
+            if args:
+                args = args.split(' ')[0]  # remove possible trailing args
+                if args not in HBNBCommand.classes:
+                    print("** class doesn't exist **")
+                    return
+
+                for k, v in storage.all(eval(args)).items():
+                    if k.split('.')[0] == args:
+                        print_list.append(str(v))
+            else:
+                for k, v in storage.all().items():
+                    print_list.append(str(v))
 
         print(print_list)
-
     def help_all(self):
         """ Help information for the all command """
         print("Shows all objects, or all of a class")
