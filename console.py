@@ -147,7 +147,10 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
         if len(args) < 2 :
-            print("** no <key name> <value> **")
+            new_instance = HBNBCommand.classes[args[0]](**valid_keys) #create instace for new object
+        #not only when reloading..... does not work for intended purpose
+            storage.save()#calls to read file_objets and write .json
+            print(new_instance.id)
             return
         valid_keys = {}
         #filtering of KEY=VALUE args
