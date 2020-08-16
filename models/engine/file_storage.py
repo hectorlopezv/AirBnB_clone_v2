@@ -19,7 +19,7 @@ class FileStorage:
         """all object of class"""
         class_name = cls.__class__.__name__
         if cls:
-            return { k:v if class_name in k for k,v in FileStorage.__objects.items() } 
+            return { k:v for k, v  in FileStorage.__objects.items() if class_name in k  } 
         else:
             return FileStorage.__objects
 
