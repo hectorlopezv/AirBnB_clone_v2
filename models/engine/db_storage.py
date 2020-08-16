@@ -50,6 +50,8 @@ class DBStorage():
 
     def new(self, obj):
         """add object to session"""
+        if not obj: 
+            return
         self.__session.add(obj)
     def save(self):
         """ commit changes to session to make then appear"""
@@ -63,7 +65,7 @@ class DBStorage():
         """basically initialize the ORM object"""
         if getenv("HBNB_ENV") == "test": #ON INIT OF .
             Base.metadata.drop_all(self.__engine)
-        Base.metadata.create_all(self.__engine)
+        Base.metadata.create_all(self.__engine)#create like database..
 
         session_factory = sessionmaker(bind=self.__engine,
                                        expire_on_commit=False)
