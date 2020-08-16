@@ -7,12 +7,12 @@ from os import getenv
 
 class Place(BaseModel, Base):
     """ A place to stay """
-    __tablename__ = 'places'
+    __tablename__ = "places"
     #only if db is selected
     if getenv('HBNB_TYPE_STORAGE') == 'db':
-        city_id = Column(String(60),ForeignKey('cities.id'), nullable=False)
+        city_id = Column(String(60),ForeignKey('cities.id', ondelete="CASCADE"), nullable=False)
         
-        user_id = Column(String(60), ForeignKey('user.id'), nullable=False)
+        user_id = Column(String(60), ForeignKey('users.id', ondelete="CASCADE"), nullable=False)
         
         name = Column(String(128), nullable=False)
         
@@ -30,7 +30,7 @@ class Place(BaseModel, Base):
         latitude = Column(Float, nullable=True)
 
         longitude = Column(Float, nullable=True)
-
+        amenity_ids = []
     else:
         city_id = ""
         user_id = ""
