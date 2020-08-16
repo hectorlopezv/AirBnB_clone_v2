@@ -13,67 +13,64 @@ from models.review import Review
 
 
 class DBStorage():
-    """DBStorage class"""
+    """db storage"""
     __engine = None
     __session = None
 
     def __init__(self):
-        """Initial method"""
-        mysql_user = getenv('HBNB_MYSQL_USER')
-        mysql_pwd = getenv('HBNB_MYSQL_PWD')
-        mysql_host = getenv('HBNB_MYSQL_HOST')
-        mysql_db = getenv('HBNB_MYSQL_DB')
-        mysql_env = getenv('HBNB_ENV')
-
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'.format(
-            mysql_user, mysql_pwd, mysql_host, mysql_db), pool_pre_ping=True)
-
-        """DROP ALL TABLES"""
-        if mysql_env == 'test':
-            Base.metadata.drop_all(self.__engine)
-
+        """constructor"""
+        db_user = getenv('HBNB_MYSQL_USER')
+        db_pwd = getenv('HBNB_MYSQL_PWD')
+        db_host = getenv('HBNB_MYSQL_HOST')
+        db_name = getenv('HBNB_MYSQL_DB')
+        DBStorage.__engine = create_engine('mysql+mysqldb://{}:{}@{}:3306/{}'.format(db_user, db_pwd, db_host, db_name), echo=True,
+        pool_pre_ping=True)
+        if getenv('HBNB_ENV') == 'test':
+            Base.metadata.drop_all(bind=self.__engine)
+        
     def all(self, cls=None):
-        """show all data
-        """
-        if cls:
-            objs = self.__session.query(cls).all()
+        """ALL METHOD TO GET ALL ROW OF CLS"""
+        classes_ = [User, State, City, Amenity, Place, Review]
+        query_result = [] #list.. every row of the table.... each row is an object User..exmpl..
 
+        if not cls:
+            for cls_ in classes:
+                query_result += self.__session.query(cls_).all()
+            """    
+            all_dict[User.__name__] = self.__session.query(User).all()
+            all_dict[State.__name__] = self.__session.query(State).all()
+            all_dict[City.__name__] = self.__session.query(City).all()
+            all_dict[Amenity.__name__] = self.__session.query(Amenity).all()
+            all_dict[Place.__name__] = self.__session.query(Place).all()
+            all_dict[Review.__name__] = self.__session.query(Review).all()
+            """
         else:
-            classes = [State, City, User, Place, Review, Amenity]
-            objs = []
-            for _class in classes:
-                objs += self.__session.query(_class)
-
-        """create and save data"""
-        new_dict = {}
-
-        for obj in objs:
-            key = '{}.{}'.format(type(obj).__name__, obj.id)
-            new_dict[key] = obj
-
-        return new_dict
+            query_result += self.__session.query(cls).all()
+        return {'{}.{}'.format(type(obj_).__name__, obj_.id):obj_ for obj_ in query_result}
 
     def new(self, obj):
-        """Add the object in the databse"""
-        if obj:
-            self.__session.add(obj)
-
+        """add object to session"""
+        self.__session.add(obj)
+    def save(self):
+        """ commit changes to session to make then appear"""
+        self.__session.commit()
+    def delete(self, obj=None):
+        """delete obj(row) from table.. expmle delete user 1 from User table"""
+        if not obj:
+            self.__session.delete(obj)
+            self.save()
     def reload(self):
-        """create all tables in the database"""
+        """basically initialize the ORM object"""
+        if getenv("HBNB_ENV") == "test": #ON INIT OF .
+            Base.metadata.drop_all(self.__engine)
         Base.metadata.create_all(self.__engine)
 
-        self.__session = sessionmaker(bind=self.__engine,
-                                      expire_on_commit=False)
-
-        Session = scoped_session(self.__session)
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
+        Session = scoped_session(session_factory)
         self.__session = Session()
+        #all session objects share the same registry 
+        #to end registry call sccoped_session.remove()
 
-    def save(self):
-        """Commit all changes of the current
-        database session"""
-        self.__session.commit()
 
-    def delete(self, obj=None):
-        """Delete from the current database"""
-        if obj:
-            self.__session.delete(obj)
+

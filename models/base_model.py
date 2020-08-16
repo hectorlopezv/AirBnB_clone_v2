@@ -3,17 +3,17 @@
 import uuid
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, DateTime
+import sqlalchemy as db
+#from sqlalchemy import Column, Integer, String, DateTime
 
-Base = declarative_base()
+Base = declarative_base() #used to make classes a table.....fml
 
 
 class BaseModel:
     """A base class for all hbnb models"""
-
-    id = Column(String(60), primary_key=True, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+    id = db.Column(db.String(60), primary_key=True, nullable=False)
+    created_at = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow())
+    updated_at = db.Column(db.DateTime(), nullable=False, default=datetime.utcnow())
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
@@ -44,15 +44,14 @@ class BaseModel:
 
     def to_dict(self):
         """Convert instance into dict format"""
-        dictionary = {}
-        dictionary.update(self.__dict__)
-        dictionary["__class__"] = str(type(self).__name__)
-        dictionary['created_at'] = self.created_at.isoformat()
-        dictionary['updated_at'] = self.updated_at.isoformat()
+        my_dict = self.__dict__.copy()
+        my_dict["__class__"] = self.__class__.__name__
+        my_dict["created_at"] = my_dict["created_at"].isoformat()
+        my_dict["updated_at"] = my_dict["updated_at"].isoformat()
         if '_sa_instance_state' in dictionary.keys():
-            del dictionary['_sa_instance_state']
+            del my_dict['_sa_instance_state']
 
-        return dictionary
+        return my_dict
 
     def delete(self):
         """public delete method, to delete the current instance from
