@@ -2,8 +2,8 @@
 """ State Module for HBNB project """
 import models
 from models.base_model import BaseModel
-#from sqlalchemy import Column, Integer, String
-#from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship, backref
 from models.city import City
 from os import getenv
 
