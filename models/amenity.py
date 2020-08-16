@@ -10,5 +10,5 @@ class Amenity(BaseModel, Base):
     """class amenity"""
     __tablename__ = "amenities"
     name = Column(String(128), nullable=False)
-    places = relationship("Place", backref="cities", cascade="all, delete")
+    
     
