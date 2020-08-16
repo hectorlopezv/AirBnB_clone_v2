@@ -1,11 +1,11 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
-from models.base_model import BaseModel
-from sqlalchemy import Column, String, ForeignKey
+from models.base_model import BaseModel, Base
+from sqlalchemy import Column, String, ForeignKey, Integer, Float
 from sqlalchemy.orm import relationship, backref
 from os import getenv
 
-class Place(BaseModel):
+class Place(BaseModel, Base):
     """ A place to stay """
     __tablename__ = 'places'
     #only if db is selected
@@ -30,8 +30,6 @@ class Place(BaseModel):
         latitude = Column(Float, nullable=True)
 
         longitude = Column(Float, nullable=True)
-        
-        places = relationship("Place", backref="user", cascade="all, delete")
 
     else:
         city_id = ""
