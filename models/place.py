@@ -39,7 +39,7 @@ class Place(BaseModel, Base):
         
         @amenities.setter
         def amenities(self, val):
-            if type(val) != Amenity and val.id not in Place.id:
+            if type(val) != Amenity or val.id  in Place.id:
                 return
             Place.amenity_ids += val.id
     
