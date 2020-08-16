@@ -136,33 +136,54 @@ class HBNBCommand(cmd.Cmd):
         finally:
             return line
     def do_create(self, args):
-            """ Create an object of any class"""
-
-            if not args:
-                print("** class name missing **")
-                return
-
-            args = args.split(" ")
-            class_name = args[0]
-            if class_name not in HBNBCommand.classes:
-                print("** class doesn't exist **")
-                return
-
-            # dictionary = { 'key': valye
-            # create <class>
-            # create <class> param1 param2...
-            # param
-
-            new_instance = HBNBCommand.classes[class_name]()
-            class_attributes = HBNBCommand.parseArguments(args[1:])
-            if class_attributes:
-                for attr, v in class_attributes.items():
-                    setattr(new_instance, attr, v)
-
-            storage.save()
+        """ Create an object of any class"""
+        args =  args.split(' ')
+        #print("esto son los args")
+        #print(args)
+        if len(args) == 0 and args[0] == '' or '='  in args[0] :
+            print("** class name missing **")
+            return
+        if not any( class_ in args for class_ in HBNBCommand.classes):
+            print("** class doesn't exist **")
+            return
+        if len(args) < 2 :
+            new_instance = HBNBCommand.classes[args[0]]() #create instace for new object
+        #not only when reloading..... does not work for intended purpose
+            storage.save()#calls to read file_objets and write .json
             print(new_instance.id)
-            #storage.save()
-            new_instance.save()
+            return
+        valid_keys = {}
+        #filtering of KEY=VALUE args
+        for argument in args[1:]:
+            arg = argument.split("=", 1)
+
+            #check if split is key=value
+            #print(arg)
+
+            #validations.....
+            if not len(arg) > 1:
+                continue
+            key = arg[0]
+            value = literal_eval(arg[1])
+            #print(HBNBCommand.types[key])
+            #print(type(value))
+            if key in  HBNBCommand.types.keys() and  HBNBCommand.types[key] == type(value):
+                type_ = HBNBCommand.types[key]
+                if type_ is str:
+                    value = value.replace("\"", "")
+                    value = value.replace("_", " ")
+                    valid_keys[key]=value
+                elif type_ is int:
+                    valid_keys[key]=value
+                elif type_ is float:
+                    valid_keys[key]=value
+                else: #case that does not match str ,int float or requirements
+                    continue
+        #print("estos son los valid", valid_keys)
+        new_instance = HBNBCommand.classes[args[0]](**valid_keys) #create instace for new object
+        #not only when reloading..... does not work for intended purpose
+        storage.save()#calls to read file_objets and write .json
+        print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
