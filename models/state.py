@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 """ State Module for HBNB project """
 import models
-from models.base_model import BaseModel
+from models.base_model import BaseModel, Base
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship, backref
 from models.city import City
 from os import getenv
 
 
-class State(BaseModel):
+class State(BaseModel, Base):
     """This is the class for State
     Attributes:
         name: input name
