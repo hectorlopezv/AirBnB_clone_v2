@@ -19,7 +19,7 @@ class Place(BaseModel, Base):
             )
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         reviews = relationship("Review", backref="place", cascade="all, delete")
-        amenities = relationship("Amenity", secondary=place_amenities, backref="place_amenities" ,viewonly=False)
+        amenities = relationship("Amenity", secondary=place_amenity, back_populates="place_amenities" ,viewonly=False)
     else:
         
         @property
@@ -35,11 +35,11 @@ class Place(BaseModel, Base):
             matching place_id
             """
             from models import storage
-            return {k: v for k, v in storage.all().items() if type(v) == Amenity if v.id in Place.amenity_ids}
+            return Place.amenity_ids
         
         @amenities.setter
         def amenities(self, val):
-            if type(val) != Amenity:
+            if type(val) != Amenity and val.id not in Place.id:
                 return
             Place.amenity_ids += val.id
     
