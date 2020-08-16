@@ -8,6 +8,18 @@ from os import getenv
 class Place(BaseModel, Base):
     """ A place to stay """
     __tablename__ = "places"
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        reviews = relationship("Review", backref="place", cascade="all, delete")
+    else:
+        
+        @property
+        def reviews(self):
+            """Return list of review instances for file storage
+            matching place_id
+            """
+            from models import storage
+            return {k: v for k, v in storage.all().items() if v.place_id == self.id}
+
     #only if db is selected
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         city_id = Column(String(60),ForeignKey('cities.id', ondelete="CASCADE"), nullable=False)
