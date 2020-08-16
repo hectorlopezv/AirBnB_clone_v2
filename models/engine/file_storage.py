@@ -40,6 +40,8 @@ class FileStorage:
     def delete(self, obj=None):
         """DELETE OBJECT"""
         key_ = None
+        if not obj:
+            return
         for k,v in FileStorage.__objects.items():
             if obj == v:
                 key_ = k
