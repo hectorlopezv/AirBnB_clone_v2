@@ -6,9 +6,8 @@ import os
 from datetime import datetime
 import tarfile
 
-env.hosts = ["34.73.8.171", "34.74.18.52"]
 env.user = "ubuntu"
-
+env.hosts = ["34.224.32.83", "35.237.32.190"]
 
 def deploy():
     """ Calls all tasks to deploy archive to webservers"""
