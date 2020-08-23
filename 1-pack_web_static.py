@@ -4,7 +4,6 @@ import tarfile
 import os
 from datetime import datetime
 
-
 def do_pack():
     """ Creates tar archive"""
     savedir = "versions/"
