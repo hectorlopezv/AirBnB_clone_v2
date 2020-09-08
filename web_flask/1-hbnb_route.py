@@ -13,10 +13,10 @@ def hello_world():
 
 
 @app.route('/hbnb')
-def hello_world():
+def hello_world_2():
     """hello world"""
     return 'HBNB'
 
 
 if __name__ == '__main__':
-    app.run(debug=True)i
+    app.run(debug=True)
