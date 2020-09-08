@@ -2,6 +2,7 @@
 """Flask framwework ligth weight"""
 
 from flask import Flask
+from markupsafe import escape
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
@@ -19,9 +20,9 @@ def hello_world_2():
 
 
 @app.route('/c/<text>')
-def hello_world_3():
+def hello_world_3(text):
     """hello world"""
-    return 'C %s' % escape(username)
+    return 'C %s' % escape(text)
 
 
 if __name__ == '__main__':
