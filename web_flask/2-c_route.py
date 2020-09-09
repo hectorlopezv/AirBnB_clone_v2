@@ -22,7 +22,7 @@ def hello_world_2():
 @app.route('/c/<text>')
 def hello_world_3(text):
     """hello world"""
-    return 'C %s' % escape(text)
+    return 'C %s' % escape(text.replace('_', ' '))
 
 
 if __name__ == '__main__':
