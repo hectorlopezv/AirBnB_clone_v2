@@ -20,16 +20,16 @@ def pop_db(x):
 def hello_1():
     """hello display all states like usual"""
     state = storage.all(State)
-    return render_template('9-state.html', state=state)
+    return render_template('9-states.html', state=state)
        
 
-@app.route("/states/<int:id>")
-def hello_1(id):
+@app.route("/states/<id>")
+def hello_2(id):
     """return dict if id found else ..."""
     for jsn in storage.all(State).values():
          if jsn.id == id:
-            return render_template('9-state.html', state=jsn)
-    return render_template('9-state.html')
+            return render_template('9-states.html', state=jsn)
+    return render_template('9-states.html')
  
 
 if __name__ == '__main__':
