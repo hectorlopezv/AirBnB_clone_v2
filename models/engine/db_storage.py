@@ -75,4 +75,6 @@ class DBStorage():
         #to end registry call sccoped_session.remove()
 
 
-
+    def close(self):
+        """close mthod for mysql database"""
+        self.__session.remove()
