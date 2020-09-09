@@ -17,13 +17,13 @@ class FileStorage:
 
     def all(self, cls=None):
         """all object of class"""
-        
+
         if cls:
             class_name = cls.__name__
-            return { k:v for k, v  in FileStorage.__objects.items() if class_name in k  } 
+            return {k: v for k, v in FileStorage.__objects.items()
+                    if class_name in k}
         else:
             return FileStorage.__objects
-
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -43,12 +43,12 @@ class FileStorage:
         key_ = None
         if not obj:
             return
-        for k,v in FileStorage.__objects.items():
+        for k, v in FileStorage.__objects.items():
             if obj == v:
                 key_ = k
                 break
         del FileStorage.__objects[key_]
-                
+
     def reload(self):
         """Loads storage dictionary from file"""
 
@@ -65,8 +65,7 @@ class FileStorage:
                         self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
-     
 
-     def close(self):
-         """close function for file storage db"""
-         self.reload()
+    def close(self):
+        """close function for file storage db"""
+        self.reload()
