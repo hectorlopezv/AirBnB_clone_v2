@@ -12,7 +12,7 @@ app.url_map.strict_slashes = False
 
 
 @app.teardown_appcontext
-def pop_db:
+def pop_db():
     """storage closing"""
     storage.close()
 
