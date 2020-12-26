@@ -1,5 +1,6 @@
 #!/usr/bin/python3
-"""compreees with fabric to a .tgz"""
+""" Fabric script to create tarball"""
+
 import tarfile
 import os
 from datetime import datetime

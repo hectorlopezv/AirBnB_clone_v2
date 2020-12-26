@@ -1,11 +1,10 @@
 #!/usr/bin/python3
-"""compreees with fabric to a .tgz"""
-
+""" Does deployment"""
 
 from fabric.api import *
 import os
 
-env.hosts = ["34.224.32.83", "35.237.32.190"]
+env.hosts = ["34.73.8.171", "34.74.18.52"]
 env.user = "ubuntu"
 
 

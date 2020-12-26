@@ -1,28 +1,26 @@
 #!/usr/bin/python3
-"""
-starts a Flask web app.
-"""
-from models import storage
-from flask import Flask, render_template
+"""Minimal flask app"""
 
+from flask import Flask, render_template
+from models import storage
+from models import State, Amenity
 app = Flask(__name__)
 
 
 @app.teardown_appcontext
-def teardown(exception):
-    """Remove the current SQLAlchemy session."""
+def closedb(foo):
+    """Closes db session"""
     storage.close()
 
 
-@app.route("/hbnb_filters", strict_slashes=False)
-def route1():
-    """Displays an HTML with a list of all States.
-    """
-    url = "10-hbnb_filters.html"
-    states = storage.all("State")
-    amenities = storage.all("Amenity")
-    return render_template(url, states=states, amenities=amenities)
+@app.route('/hbnb_filters', strict_slashes=False)
+def hbnb_filters():
+    """Route /hbnb_filters"""
+    states = storage.all(State)
+    amenities = storage.all(Amenity)
+    return render_template('10-hbnb_filters.html', **locals())
 
 
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port='5000')
+if __name__ == '__main__':
+    storage.reload()
+    app.run("0.0.0.0", 5000)

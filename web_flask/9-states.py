@@ -1,38 +1,36 @@
 #!/usr/bin/python3
-"""Flask framwework ligth weight"""
+"""Minimal flask app"""
 
-from flask import Flask
-from markupsafe import escape
-from flask import render_template
+from flask import Flask, render_template
 from models import storage
-from models.state import State
-
+from models import State
 app = Flask(__name__)
-app.url_map.strict_slashes = False
 
 
 @app.teardown_appcontext
-def pop_db(x):
-    """storage closing"""
+def closedb(foo):
+    """Closes db session"""
     storage.close()
 
-@app.route("/states")
-def hello_1():
-    """hello display all states like usual"""
-    state = storage.all(State)
-    return render_template('9-states.html', state=state)
-       
 
-@app.route("/states/<id>")
-def hello_2(id):
-    """return dict if id found else ..."""
-    for jsn in storage.all(State).values():
-         if jsn.id == id:
-            return render_template('9-states.html', state=jsn)
-    return render_template('9-states.html')
- 
+@app.route('/states', strict_slashes=False, defaults={'id': None})
+@app.route('/states/<id>', strict_slashes=False)
+def states(id):
+    """Route /states"""
+    state = states = None
+    if not id:
+        states = list(storage.all(State).values())
+    else:
+        states = storage.all(State)
+        key = "State." + id
+        if key in states:
+            state = states[key]
+        else:
+            state = None
+        states = []
+    return render_template('9-states.html', **locals())
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
     storage.reload()
-    app.run(host='0.0.0.0', port='5000')
+    app.run("0.0.0.0", 5000)
